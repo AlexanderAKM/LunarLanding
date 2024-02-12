@@ -16,8 +16,8 @@ def run(episodes):
     max_epsilon = 1.0
     min_epsilon = 0.01
     decay_rate = 0.001
-    print(f"low observation state = {env.observation_space.low}")
-    print(f"high observation state = {env.observation_space.high}")
+    #print(f"low observation state = {env.observation_space.low}")
+    #print(f"high observation state = {env.observation_space.high}")
 
     q_table = np.random.uniform(low=0, high=1, size=(n_bins + [env.action_space.n]))
 
@@ -28,7 +28,7 @@ def run(episodes):
         
         for i, val in enumerate(state):
             if i < 6:
-                discretized.append(np.digitize(val, bins[i] - 1))
+                discretized.append(np.digitize(val, bins[i]) - 1)
             else:
                 discretized.append(int(val))
         
@@ -73,9 +73,11 @@ def run(episodes):
                 time.sleep(0.01)
             
             if not terminated and not truncated:
-                current_q = q_table[discrete_state + (action),]
+                #print(discrete_state)
+                #print(action)
+                current_q = q_table[discrete_state + (action,)]
                 new_q = current_q + LEARNING_RATE * (reward + DISCOUNT * np.max(q_table[new_discrete_state]) - current_q)
-                q_table[discrete_state + (action),] = new_q
+                q_table[discrete_state + (action,)] = new_q
             
             discrete_state = new_discrete_state
 
