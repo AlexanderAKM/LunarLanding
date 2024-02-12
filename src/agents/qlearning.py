@@ -5,7 +5,7 @@ import math
 import pandas as pd
 
 def run(episodes):
-    env = gym.make("LunarLander-v2")
+    env = gym.make("LunarLander-v2", render_mode = "human")
 
     LEARNING_RATE = 0.1
     DISCOUNT = 0.95

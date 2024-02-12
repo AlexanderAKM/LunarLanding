@@ -23,12 +23,12 @@ def run(episodes):
     q_table = np.random.uniform(low=0, high=1, size=(n_bins + [env.action_space.n]))
 
     def get_action(epsilon, discrete_state):
-
         if np.random.random() > epsilon:
             action = np.argmax(q_table[discrete_state])
         else:
             action = np.random.randint(0, env.action_space.n)
-        
+
+        print(action)
         return action
 
     def get_discrete_state(state, bins):
@@ -62,6 +62,7 @@ def run(episodes):
         terminated, truncated = False, False
         epsilon = min_epsilon + (max_epsilon - min_epsilon) * math.exp(-decay_rate * episode)
         action = get_action(epsilon, discrete_state)
+        print(action)
 
         if episode % SHOW_EVERY == 0:
             render = True
@@ -81,15 +82,17 @@ def run(episodes):
             
             if not terminated and not truncated:
                 current_q = q_table[discrete_state + (action,)]
-                new_q = current_q + LEARNING_RATE * (reward + DISCOUNT * np.max(q_table[new_discrete_state]) - current_q)
+                q_new_action = q_table[new_discrete_state + (new_action,)]
+                new_q = current_q + LEARNING_RATE * (reward + DISCOUNT * q_new_action - current_q)
                 q_table[discrete_state + (action,)] = new_q
             
             discrete_state = new_discrete_state
+            action = q_new_action
 
         rewards_episodes['Episode'].append(episode)
         rewards_episodes['Reward'].append(total_reward)
         
-    rewards_file_path = f'data/input/rewards_qlearning_{episodes}.csv'
+    rewards_file_path = f'data/input/rewards_sarsa_{episodes}.csv'
     df_rewards = pd.DataFrame(rewards_episodes)
     df_rewards.to_csv(rewards_file_path, index=False)
 
