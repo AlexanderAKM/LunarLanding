@@ -5,7 +5,7 @@ import math
 import pandas as pd
 
 def run(episodes):
-    env = gym.make("LunarLander-v2")
+    env = gym.make("LunarLander-v2", render_mode = "rgb_array")
 
     LEARNING_RATE = 0.1
     DISCOUNT = 0.95
@@ -25,10 +25,13 @@ def run(episodes):
     def get_action(epsilon, discrete_state):
         if np.random.random() > epsilon:
             action = np.argmax(q_table[discrete_state])
+            #print(f'yes, the action is {action}')
         else:
             action = np.random.randint(0, env.action_space.n)
+            #print(f'no, the action is {action}')
 
-        print(action)
+
+        #print(action)
         return action
 
     def get_discrete_state(state, bins):
@@ -62,7 +65,7 @@ def run(episodes):
         terminated, truncated = False, False
         epsilon = min_epsilon + (max_epsilon - min_epsilon) * math.exp(-decay_rate * episode)
         action = get_action(epsilon, discrete_state)
-        print(action)
+        #print(action)
 
         if episode % SHOW_EVERY == 0:
             render = True
@@ -71,7 +74,9 @@ def run(episodes):
             render = False
 
         while not terminated and not truncated:
+            #print(action)
             new_state, reward, terminated, truncated, _ = env.step(action)
+            #print(new_state)
             new_discrete_state = get_discrete_state(new_state, bins)
             total_reward += reward
             new_action = get_action(epsilon, new_discrete_state)
@@ -87,7 +92,7 @@ def run(episodes):
                 q_table[discrete_state + (action,)] = new_q
             
             discrete_state = new_discrete_state
-            action = q_new_action
+            action = new_action
 
         rewards_episodes['Episode'].append(episode)
         rewards_episodes['Reward'].append(total_reward)
@@ -98,8 +103,7 @@ def run(episodes):
 
     env.close()
 
-if __name__ == "__main__":
-    run(episodes=2000)
+run(episodes=2000)
 
 
 
