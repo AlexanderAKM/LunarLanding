@@ -21,7 +21,7 @@ def run(episodes):
     # if is_ipython:
         # from IPython import display
 
-    device = torch.device("cuda" if torch.cude.is_available() else: "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     Transition = namedtuple('Transition',
                             ('state', 'action', 'next_state', 'reward'))
@@ -62,7 +62,7 @@ def run(episodes):
     n_actions = env.action_space.n
 
     state, info = env.reset()
-    n_observations = env.observation_space.n
+    n_observations = len(state)
 
     policy_net = DQN(n_observations, n_actions).to(device)
     target_net = DQN(n_observations, n_actions).to(device)
@@ -110,7 +110,7 @@ def run(episodes):
 
         expected_state_action_values = (next_state_values * GAMMA) + reward_batch
 
-        criterion = nn.SmoothL1Loos()
+        criterion = nn.SmoothL1Loss()
         loss = criterion(state_action_values, expected_state_action_values.unsqueeze(1))
 
         optimizer.zero_grad()
@@ -123,8 +123,9 @@ def run(episodes):
         state, info = env.reset()
         state = torch.tensor(state, dtype = torch.float32, device = device).unsqueeze(0)
         total_reward = 0
+        terminated, truncated = False, False
 
-        for t in count():
+        while not terminated and not truncated:
             action = select_action(state)
             observation, reward, terminated, truncated, _ = env.step(action.item())
 
@@ -145,12 +146,18 @@ def run(episodes):
             target_net_state_dict = target_net.state_dict()
             policy_net_state_dict = policy_net.state_dict()
             for key in policy_net_state_dict:
-                target_net_state_dict[key] = policy_net_state_dict[key] * TAU + target_net_state_dict * (1-TAU)
+                target_net_state_dict[key] = policy_net_state_dict[key] * TAU + target_net_state_dict[key] * (1-TAU)
                 target_net.load_state_dict(target_net_state_dict)
-            
-            
+        
+        rewards_episodes['Episode'].append(episode)
+        rewards_episodes['Reward'].append(total_reward)
+    rewards_file_path = f'data/input/rewards_dqn_{episodes}.csv'
+    df_rewards = pd.DataFrame(rewards_episodes)
+    df_rewards.to_csv(rewards_file_path, index=False)
 
-            
+    env.close()
+
+run(200)      
 
 
 
