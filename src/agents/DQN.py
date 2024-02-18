@@ -131,6 +131,25 @@ def run(episodes):
             total_reward += reward
             reward = torch.tensor([reward], device = device)
 
+            if terminated:
+                next_state = None
+            else:
+                next_state = torch.tensor(observation, dtype=torch.float32, device=device).unsqueeze(0)
+
+            memory.push(state, action, next_state, reward)
+            state = next_state
+
+            if len(memory) > BATCH_SIZE:
+                optimize_model()
+
+            target_net_state_dict = target_net.state_dict()
+            policy_net_state_dict = policy_net.state_dict()
+            for key in policy_net_state_dict:
+                target_net_state_dict[key] = policy_net_state_dict[key] * TAU + target_net_state_dict * (1-TAU)
+                target_net.load_state_dict(target_net_state_dict)
+            
+            
+
             
 
 
