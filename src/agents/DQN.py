@@ -157,7 +157,7 @@ def run(episodes):
 
     env.close()
 
-run(200)      
+run(1000)      
 
 
 
