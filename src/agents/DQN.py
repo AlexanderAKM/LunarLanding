@@ -115,7 +115,7 @@ def run(episodes):
         optimizer.zero_grad()
         loss.backward()
         
-        torch.nn.utils.clip_grad_value_(policy_net.parameters(), 100)
+        torch.nn.utils.clip_grad_value_(policy_net.parameters(), 1)
         optimizer.step()
 
     for episode in range(episodes):
@@ -158,7 +158,7 @@ def run(episodes):
 
     env.close()
 
-run(300)      
+run(500)      
 
 
 
