@@ -119,6 +119,8 @@ def run(episodes):
         optimizer.step()
 
     for episode in range(episodes):
+        if episode % 50 == 0:
+            print(f"episode: {episode}")
         state, info = env.reset()
         state = torch.tensor(state, dtype = torch.float32, device = device).unsqueeze(0)
         total_reward = 0

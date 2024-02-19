@@ -105,7 +105,8 @@ def run(episodes):
         next_state_values = torch.zeros(BATCH_SIZE, device = device)
 
         with torch.no_grad():
-            next_state_values[non_final_mask] = target_net(non_final_next_states).max(1).values
+            next_state_actions = policy_net(non_final_next_states).max(1, keepdim=True)[1]
+            next_state_values[non_final_mask] = target_net(non_final_next_states).gather(1, next_state_actions).unsqueeze()
 
         expected_state_action_values = (next_state_values * GAMMA) + reward_batch
 
@@ -114,11 +115,13 @@ def run(episodes):
 
         optimizer.zero_grad()
         loss.backward()
-        
-        torch.nn.utils.clip_grad_value_(policy_net.parameters(), 100)
+        for param in policy_net.parameters():
+            param.grad.data.clamp(-1, 1)
         optimizer.step()
 
     for episode in range(episodes):
+        if episode % 50 == 0:
+            print(f"episode: {episode}")
         state, info = env.reset()
         state = torch.tensor(state, dtype = torch.float32, device = device).unsqueeze(0)
         total_reward = 0
