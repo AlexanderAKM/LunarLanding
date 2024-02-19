@@ -13,7 +13,7 @@ import torch.nn.functional as F
 
 def run(episodes):
 
-    env = gym.make("CartPole-v1")
+    env = gym.make("LunarLander-v2")
 
     # If you're using Jupyter Notebook, uncomment the imports and the following lines:
     # is_ipython = 'inline' in matplotlib.get_backend():
@@ -156,7 +156,7 @@ def run(episodes):
 
     env.close()
 
-run(2000)      
+run(300)      
 
 
 
