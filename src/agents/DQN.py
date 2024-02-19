@@ -1,11 +1,10 @@
 import gymnasium as gym
 import math 
 import random
-import matplotlib
-import matplotlib.pyplot as plt
+#import matplotlib
+#import matplotlib.pyplot as plt
 import pandas as pd
 from collections import namedtuple, deque
-from itertools import count
 
 import torch
 import torch.nn as nn
@@ -16,7 +15,7 @@ def run(episodes):
 
     env = gym.make("CartPole-v1")
 
-    # If you're using Jupyter Notebook, uncomment the following lines:
+    # If you're using Jupyter Notebook, uncomment the imports and the following lines:
     # is_ipython = 'inline' in matplotlib.get_backend():
     # if is_ipython:
         # from IPython import display
@@ -51,7 +50,7 @@ def run(episodes):
             x = F.relu(self.layer2(x))
             return self.layer3(x)
         
-    BATCH_SIZE = 64
+    BATCH_SIZE = 128
     GAMMA = 0.995
     EPS_START = 0.9
     EPS_END = 0.05
@@ -157,7 +156,7 @@ def run(episodes):
 
     env.close()
 
-run(1000)      
+run(2000)      
 
 
 
