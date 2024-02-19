@@ -153,7 +153,7 @@ def run(episodes):
         
         rewards_episodes['Episode'].append(episode)
         rewards_episodes['Reward'].append(total_reward)
-    rewards_file_path = f'data/input/rewards_dqn_{episodes}.csv'
+    rewards_file_path = f'data/input/rewards_double_dqn_{episodes}.csv'
     df_rewards = pd.DataFrame(rewards_episodes)
     df_rewards.to_csv(rewards_file_path, index=False)
 
