@@ -106,7 +106,7 @@ def run(episodes):
 
         with torch.no_grad():
             next_state_actions = policy_net(non_final_next_states).max(1, keepdim=True)[1]
-            next_state_values[non_final_mask] = target_net(non_final_next_states).gather(1, next_state_actions).unsqueeze()
+            next_state_values[non_final_mask] = target_net(non_final_next_states).gather(1, next_state_actions).squeeze()
 
         expected_state_action_values = (next_state_values * GAMMA) + reward_batch
 
